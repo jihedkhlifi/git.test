@@ -1,0 +1,5 @@
+<h1>{{ author.username }}</h1>
+<img src="{{ author.picture }}" alt="{{ author.username }}" width="150">
+<p>Email: {{ author.email }}</p>
+<p>Nombre de livres: {{ author.nb_books }}</p>
+<a href="{{ path('list_authors') }}">Retour à la liste</a>
