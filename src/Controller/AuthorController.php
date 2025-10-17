@@ -66,7 +66,76 @@ public function authorDetails(int $id): Response
 }
 
 
+#[Route('/Listuser', name: 'list_user')]
+    public function ListUser(UserRepository $r , ManagerRegistry $mr): Response //1- injection de dépendance
+    {
+        $result = $r->findAll();  // 2- appel de la méthode findAll() recuperation de tous les utilisateurs
+         //3- transmission des données à la vue
+        return $this->render('user/listBD.html.twig', [
+            'result' => $result,
+        ]);
+    }
 
+      #[Route('/addUser', name: 'addUser')]
+    public function addUser(ManagerRegistry $mr): Response 
+     //3- l'injection de dépendance managerRegistry
+    {
+        //1- creation de l'instance de l'entité User
+        $user = new User();
+        //2- affectation des valeurs aux attributs de l'entité
+        $user->setName("Alice");
+        $user->setAge(28);
+        $user->setEmail("alice@example.com");
+        //4-recuperation de l'entity manager
+        $em=$mr->getManager(); 
+        //5- persister l'entité
+        $em->persist($user);
+        //6- flush
+        $em->flush();
+        //7- redirection vers la liste des utilisateurs
+        return $this->redirectToRoute('list_user');
+    }
+
+      #[Route('/updateUser/{id}', name: 'updateUser')]
+     public function updateUser(ManagerRegistry $mr,$id, UserRepository $repo): Response 
+     //3- l'injection de dépendance managerRegistry + repository + id
+    {
+        //1- recuperation de l'utilisateur à modifier
+       $user = $repo->find($id);
+        //2- affectation des nouvelles valeurs aux attributs de l'entité
+        $user->setName("amir");
+        $user->setAge(29);
+        $user->setEmail("amir@yazidi.com");
+        //4-recuperation de l'entity manager
+        $em=$mr->getManager(); 
+        //5- persister l'entité
+        $em->persist($user);
+        //6- flush
+        $em->flush();
+        //7- redirection vers la liste des utilisateurs
+        return $this->redirectToRoute('list_user');
+    }
+
+
+    
+    #[Route('/deleteUser/{id}', name: 'deleteUser')]
+    public function deleteUser(ManagerRegistry $mr, $id, UserRepository $repo): Response 
+    {
+        //1- recuperation de l'utilisateur à supprimer
+        $user = $repo->find($id);
+
+        //2- recuperation de l'entity manager
+        $em = $mr->getManager();
+
+        //3- suppression de l'entité
+        $em->remove($user);
+
+        //4- flush
+        $em->flush();
+
+        //5- redirection vers la liste des utilisateurs
+        return $this->redirectToRoute('list_user');
+    }
 
 
 }
